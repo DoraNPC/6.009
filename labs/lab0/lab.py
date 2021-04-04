@@ -13,9 +13,18 @@ def backwards(sound):
     return result
 
 
-
 def mix(sound1, sound2, p):
-    raise NotImplementedError
+    result = {}
+    result['right'] = []
+    result['left'] = []
+    if sound1['rate'] != sound2['rate']:
+        return None
+    result['rate'] = sound1['rate']
+    length = min(len(sound1['right']), len(sound2['right']))
+    for i in range(length):
+        result['right'].append(sound1['right'][i] * p + sound2['right'][i] * (1-p))
+        result['left'].append(sound1['left'][i] * p + sound2['left'][i] * (1-p))
+    return result
 
 
 def echo(sound, num_echos, delay, scale):
@@ -23,11 +32,26 @@ def echo(sound, num_echos, delay, scale):
 
 
 def pan(sound):
-    raise NotImplementedError
+    result = {}
+    result['rate'] = sound['rate']
+    result['right'] = []
+    result['left'] = []
+    length = len(sound['right'])
+    for i in range(length):
+        result['right'].append(i/(length - 1) * sound['right'][i])
+        result['left'].append((1 -i/(length - 1)) * sound['left'][i])
+    return result
 
 
 def remove_vocals(sound):
-    raise NotImplementedError
+    result = {}
+    result['rate'] = sound['rate']
+    result['right'] = []
+    result['left'] = []
+    for i in range(len(sound['right'])):
+        result['right'].append(sound['left'][i] - sound['right'][i])
+        result['left'].append(sound['left'][i] - sound['right'][i])
+    return result
 
 
 # below are helper functions for converting back-and-forth between WAV files
